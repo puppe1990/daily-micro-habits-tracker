@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
+import './App.css'; // Import the CSS styles
 
 const DailyMicroHabitsTracker = () => {
   const [habits, setHabits] = useState([
@@ -29,25 +30,29 @@ const DailyMicroHabitsTracker = () => {
   };
 
   return (
-    <div>
-      <h1>Daily Micro Habits Tracker</h1>
+    <div className="bg-gray-200 min-h-screen p-4">
+      <h1 className="text-gray-700 text-2xl mb-4">Daily Micro Habits Tracker</h1>
       <Calendar
         onChange={(date) => setSelectedDate(date)}
         value={selectedDate}
         tileContent={({ date }) => {
           const dateStr = date.toISOString().substring(0, 10);
           return habits.map((habit, index) => (
-            <div key={habit.name}>
+            <div 
+              key={habit.name}
+              className={`flex items-center justify-center h-32 rounded-md ${habitCompletion[dateStr]?.[index] ? "bg-green-500" : "bg-red-500"} shadow-md`}
+            >
               <input
                 type="checkbox"
                 checked={habitCompletion[dateStr]?.[index] || false}
                 onChange={() => markHabitCompleted(index)}
               />
-              {habit.name}
+              <span className="text-center text-sm ml-2">{habit.name}</span>
             </div>
           ));
         }}
       />
+      <button className="custom-button mt-4">Save</button>
     </div>
   );
 };
