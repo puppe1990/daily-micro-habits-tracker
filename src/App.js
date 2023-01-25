@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Calendar from 'react-calendar';
 
 const DailyMicroHabitsTracker = () => {
   const [habits, setHabits] = useState([
@@ -7,6 +8,8 @@ const DailyMicroHabitsTracker = () => {
     { name: 'Exercise for 30 minutes', completed: false },
     { name: 'Write in journal for 15 minutes', completed: false },
   ]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [habitCompletion, setHabitCompletion] = useState({});
 
   const toggleHabit = (index) => {
     const newHabits = [...habits];
@@ -14,21 +17,37 @@ const DailyMicroHabitsTracker = () => {
     setHabits(newHabits);
   };
 
+  const markHabitCompleted = (habitIndex) => {
+    const date = selectedDate.toISOString().substring(0, 10);
+    setHabitCompletion({
+      ...habitCompletion,
+      [date]: {
+        ...habitCompletion[date],
+        [habitIndex]: !habitCompletion[date]?.[habitIndex],
+      },
+    });
+  };
+
   return (
     <div>
       <h1>Daily Micro Habits Tracker</h1>
-      <ul>
-        {habits.map((habit, index) => (
-          <li key={habit.name}>
-            <input
-              type="checkbox"
-              checked={habit.completed}
-              onChange={() => toggleHabit(index)}
-            />
-            {habit.name}
-          </li>
-        ))}
-      </ul>
+      <Calendar
+        onChange={(date) => setSelectedDate(date)}
+        value={selectedDate}
+        tileContent={({ date }) => {
+          const dateStr = date.toISOString().substring(0, 10);
+          return habits.map((habit, index) => (
+            <div key={habit.name}>
+              <input
+                type="checkbox"
+                checked={habitCompletion[dateStr]?.[index] || false}
+                onChange={() => markHabitCompleted(index)}
+              />
+              {habit.name}
+            </div>
+          ));
+        }}
+      />
     </div>
   );
 };
